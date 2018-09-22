@@ -178,26 +178,26 @@ class Registration extends Component {
   handleLogin = e => {
     e.preventDefault();
 
-    const { handleLoginEmail, handleLoginPassword, name } = this.state;
+    const { handleLoginEmail, handleLoginPassword } = this.state;
     fire
       .auth()
       .signInWithEmailAndPassword(handleLoginEmail, handleLoginPassword)
       .then(a => {
         let userID = a.user.uid;
         console.log(userID);
-        let myID = localStorage.setItem("myID", userID);
+        // let myID = localStorage.setItem("myID", userID);
 
         var userRef = fire.database().ref(`Users/${userID}`);
 
         userRef.on("value", x => {
           let data = x.val();
           let uffName = data.displayName;
-          let userName = localStorage.setItem("myName", uffName);
+          // let user Name = localStorage.setItem("myName", uffName);
           swal("Login Successfully").then(val => {
             this.setState({
               name: uffName
             });
-            this.props.enableList();
+            this.props.enableList(uffName);
           });
         });
       })
@@ -228,7 +228,7 @@ class Registration extends Component {
           let data = x.val();
           let uffName = data.displayName;
           console.log(uffName);
-          let userName = localStorage.setItem("myName", uffName);
+          // let userName = localStorage.setItem("myName", uffName);
         });
 
         swal("Sign Up Successfully");

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import fire from './fire';
 
-class MyApp extends Component {
+class TutFirebaseTask extends Component {
   constructor(props) {
     super(props);
     this.state = { messages: [] }; // <- set up react state
@@ -36,4 +36,4 @@ class MyApp extends Component {
   }
 }
 
-export default MyApp;
+export default TutFirebaseTask;

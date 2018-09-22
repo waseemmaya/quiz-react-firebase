@@ -14,6 +14,7 @@ class Quiz extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      displayName : '',
       quizName: "",
       currentQuiz: "",
       result: [],
@@ -25,6 +26,7 @@ class Quiz extends Component {
 
   render() {
     const {
+      displayName,
       isAuth,
       result,
       enableList,
@@ -34,7 +36,7 @@ class Quiz extends Component {
     } = this.state;
     return (
       <App centerd="true">
-        <MyHeader goHome={this.goHome} isAuth={isAuth} logout={this.logout} />
+        <MyHeader displayName={displayName} goHome={this.goHome} isAuth={isAuth} logout={this.logout} />
         {!isAuth &&
           !enableList && <Registration enableList={this.enableList} />}
         {isAuth &&
@@ -69,10 +71,12 @@ class Quiz extends Component {
   };
 
   enableQuiz = (i, name) => {
+    // console.log('procKey***', key);
+    
     swal("Proctoring Key:", {
       content: "input"
     }).then(value => {
-      if (value === 'test') {
+      if (value === "key") {
         let myID = localStorage.getItem("myID");
         let scoreRef = fire.database().ref(`Users/${myID}`);
         let a = this.state.result[i].id;
@@ -115,6 +119,7 @@ class Quiz extends Component {
     const { result } = this.state;
     let quizes = fire.database().ref(`AllQuiz`); //get from props
     quizes.on("child_added", snapshot => {
+      // console.log('snapshot', snapshot.val());
       let quiz = {
         quiz: snapshot.val(),
         id: snapshot.key
@@ -133,8 +138,11 @@ class Quiz extends Component {
     });
   }
 
-  enableList = () => {
+  enableList = (displayName) => {
+    // console.log('displayName',displayName);
+    
     this.setState({
+      displayName: displayName,
       isAuth: true,
       enableList: true
     });

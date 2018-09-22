@@ -155,10 +155,12 @@ class ShowQuiz extends Component {
 
   componentWillMount() {
     const { result } = this.state;
-    const { currentQuiz, quizName } = this.props;
+    const { currentQuiz } = this.props;
 
     let quizes = fire.database().ref(`AllQuiz/${currentQuiz}`); //get from props
     quizes.on("child_added", snapshot => {
+      
+      
       let quiz = {
         quiz: snapshot.val(),
         id: snapshot.key
@@ -173,7 +175,7 @@ class ShowQuiz extends Component {
         loaded: true
       });
 
-      console.log("quiz name", quizName);
+      // console.log("quiz name", quizName);
     });
   }
 }
