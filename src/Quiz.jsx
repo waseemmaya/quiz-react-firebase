@@ -1,9 +1,14 @@
 import React, { Component } from "react";
 import App from "grommet/components/App";
 import Box from "grommet/components/Box";
+import Article from "grommet/components/Article";
+import Toast from "grommet/components/Toast";
+
 import Spinning from "grommet/components/icons/Spinning";
 import Registration from "./Components/Registration";
 import MyHeader from "./Components/MyHeader";
+import MyFooter from "./Components/MyFooter";
+
 import ShowQuiz from "./Components/ShowQuiz";
 import QuizList from "./Components/QuizList";
 import swal from "sweetalert";
@@ -14,10 +19,11 @@ class Quiz extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      displayName : '',
+      displayName: "",
       quizName: "",
       currentQuiz: "",
       result: [],
+      allNames : [],
       isAuth: false,
       enableList: false,
       enableQuiz: false
@@ -30,18 +36,25 @@ class Quiz extends Component {
       isAuth,
       result,
       enableList,
+      allNames,
       enableQuiz,
       currentQuiz,
       quizName
     } = this.state;
     return (
       <App centerd="true">
-        <MyHeader displayName={displayName} goHome={this.goHome} isAuth={isAuth} logout={this.logout} />
+        <MyHeader
+          displayName={displayName}
+          goHome={this.goHome}
+          isAuth={isAuth}
+          logout={this.logout}
+        />
+
         {!isAuth &&
           !enableList && <Registration enableList={this.enableList} />}
         {isAuth &&
           enableList && (
-            <QuizList result={result} enableQuiz={this.enableQuiz} />
+            <QuizList allNames={allNames} result={result} enableQuiz={this.enableQuiz} />
           )}
         {isAuth &&
           !enableList &&
@@ -52,6 +65,7 @@ class Quiz extends Component {
               back={this.back}
             />
           )}
+        <MyFooter />
       </App>
     );
   }
@@ -71,21 +85,20 @@ class Quiz extends Component {
   };
 
   enableQuiz = (i, name) => {
-    // console.log('procKey***', key);
-    
-    swal("Proctoring Key:", {
-      content: "input"
-    }).then(value => {
-      if (value === "key") {
-        let myID = localStorage.getItem("myID");
-        let scoreRef = fire.database().ref(`Users/${myID}`);
-        let a = this.state.result[i].id;
-        let quizName = name;
-    
-        scoreRef.on("value", x => {
-          let data = x.val();
-    
-          if (typeof data[quizName] === "undefined") {
+    let myID = localStorage.getItem("myID");
+    let scoreRef = fire.database().ref(`Users/${myID}`);
+    let a = this.state.result[i].id;
+    let quizName = name;
+    scoreRef.on("value", x => {
+      let data = x.val();
+
+      if (typeof data[quizName] === "undefined") {
+        swal("Proctoring Key:", "Default Key is : key", {
+          icon: "warning",
+          buttons: true,
+          content: "input"
+        }).then(value => {
+          if (value === "key") {
             this.setState({
               quizName: quizName,
               currentQuiz: a,
@@ -93,16 +106,15 @@ class Quiz extends Component {
               enableList: false
             });
           } else {
-            swal(
-              `You have already given test and your score is ${
-                data[quizName].myScore
-              } / ${data[quizName].outOf}`
-            );
+            console.log("wrong key");
           }
         });
       } else {
-        console.log('wrong key');
-        
+        swal(
+          `You have already given test and your score is ${
+            data[quizName].myScore
+          } / ${data[quizName].outOf}`
+        );
       }
     });
   };
@@ -116,7 +128,7 @@ class Quiz extends Component {
   };
 
   componentWillMount() {
-    const { result } = this.state;
+    const { result, allNames } = this.state;
     let quizes = fire.database().ref(`AllQuiz`); //get from props
     quizes.on("child_added", snapshot => {
       // console.log('snapshot', snapshot.val());
@@ -126,21 +138,36 @@ class Quiz extends Component {
       };
 
       //   console.log(snapshot);
-
       result.push(quiz);
+      allNames.push(quiz.id)
 
       this.setState({
+        allNames,
         result,
         loaded: true
       });
 
-      //   console.log(this.state.result);
+        // console.log(this.state.allNames);
     });
   }
 
-  enableList = (displayName) => {
+  enableList = displayName => {
     // console.log('displayName',displayName);
+
+
+
+
     
+
+
+
+
+
+
+
+
+
+
     this.setState({
       displayName: displayName,
       isAuth: true,
@@ -149,19 +176,35 @@ class Quiz extends Component {
   };
 
   logout = () => {
-    fire
-      .auth()
-      .signOut()
-      .then(() => {
-        console.log("Sign Out Successfully...!");
-        this.setState({
-          isAuth: false,
-          enableList: false,
-          enableQuiz: false
-        });
-        localStorage.clear();
-      })
-      .catch(function(error) {});
+    swal({
+      title: "Are you sure?",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true
+    }).then(willDelete => {
+      if (willDelete) {
+        fire
+          .auth()
+          .signOut()
+          .then(() => {
+            console.log("Sign Out Successfully...!");
+            this.setState({
+              isAuth: false,
+              enableList: false,
+              enableQuiz: false,
+              displayName: ""
+            });
+            localStorage.clear();
+          })
+          .catch(function(error) {});
+
+        // swal("Logout Successfully!", {
+        //   icon: "success"
+        // });
+      } else {
+        // swal("Your imaginary file is safe!");
+      }
+    });
   };
 }
 

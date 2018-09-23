@@ -14,7 +14,7 @@ import Button from "grommet/components/Button";
 class MyHeader extends Component {
   render() {
     return (
-      <Header fixed="true" size="small">
+      <Header fixed="true" size="small" margin="small">
         <Button icon={<Add />} label="New" size='small' href="#" primary={true} />
 
         <Heading uppercase={true} truncate={true} align='center' margin="medium">

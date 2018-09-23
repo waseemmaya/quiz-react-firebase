@@ -13,7 +13,7 @@ class MyHeader extends Component {
   render() {
     const { isAuth, logout } = this.props;
     return (
-      <Header fixed={false} size="medium" splash={false}>
+      <Header fixed={true} size="medium" splash={false}>
         <Title onClick={this.props.goHome}>
           <Heading
             tag="h4"
@@ -39,6 +39,9 @@ class MyHeader extends Component {
           </Heading>
           {isAuth && (
             <Menu icon={<Actions />} dropAlign={{ right: "right" }}>
+            <br/>
+            <br/>
+            <br/>
               {/* <Anchor href="#" className="active">
               
             </Anchor>

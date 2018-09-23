@@ -184,16 +184,16 @@ class Registration extends Component {
       .signInWithEmailAndPassword(handleLoginEmail, handleLoginPassword)
       .then(a => {
         let userID = a.user.uid;
-        console.log(userID);
-        // let myID = localStorage.setItem("myID", userID);
+        // console.log(userID);
+        let myID = localStorage.setItem("myID", userID);
 
         var userRef = fire.database().ref(`Users/${userID}`);
 
         userRef.on("value", x => {
           let data = x.val();
           let uffName = data.displayName;
-          // let user Name = localStorage.setItem("myName", uffName);
-          swal("Login Successfully").then(val => {
+          let userName = localStorage.setItem("myName", uffName);
+          swal("Good job!", "Login Successfully!", "success").then(val => {
             this.setState({
               name: uffName
             });
@@ -228,10 +228,10 @@ class Registration extends Component {
           let data = x.val();
           let uffName = data.displayName;
           console.log(uffName);
-          // let userName = localStorage.setItem("myName", uffName);
+          let userName = localStorage.setItem("myName", uffName);
         });
 
-        swal("Sign Up Successfully");
+        swal("Good job!", "Signup Successfully!", "success");
         this.setState({
           showNum: 1
         });
