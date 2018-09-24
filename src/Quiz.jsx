@@ -1,18 +1,13 @@
 import React, { Component } from "react";
 import App from "grommet/components/App";
 import Box from "grommet/components/Box";
-import Article from "grommet/components/Article";
-import Toast from "grommet/components/Toast";
-
 import Spinning from "grommet/components/icons/Spinning";
 import Registration from "./Components/Registration";
 import MyHeader from "./Components/MyHeader";
 import MyFooter from "./Components/MyFooter";
-
 import ShowQuiz from "./Components/ShowQuiz";
 import QuizList from "./Components/QuizList";
 import swal from "sweetalert";
-
 import fire from "./fire";
 
 class Quiz extends Component {
@@ -23,7 +18,7 @@ class Quiz extends Component {
       quizName: "",
       currentQuiz: "",
       result: [],
-      allNames : [],
+      allNames: [],
       isAuth: false,
       enableList: false,
       enableQuiz: false
@@ -54,7 +49,11 @@ class Quiz extends Component {
           !enableList && <Registration enableList={this.enableList} />}
         {isAuth &&
           enableList && (
-            <QuizList allNames={allNames} result={result} enableQuiz={this.enableQuiz} />
+            <QuizList
+              allNames={allNames}
+              result={result}
+              enableQuiz={this.enableQuiz}
+            />
           )}
         {isAuth &&
           !enableList &&
@@ -78,13 +77,23 @@ class Quiz extends Component {
   };
 
   goHome = () => {
-    this.setState({
-      enableList: true,
-      enableQuiz: false
-    });
+    const { isAuth} = this.state;
+    if (isAuth) {
+      this.setState({
+        enableList: true,
+        enableQuiz: false
+      });
+    } else {
+      this.setState({
+        enableList: false,
+        enableQuiz: false
+      });
+    }
+  
   };
 
-  enableQuiz = (i, name) => {
+  enableQuiz = (i, name, pass) => {
+    const key = pass;
     let myID = localStorage.getItem("myID");
     let scoreRef = fire.database().ref(`Users/${myID}`);
     let a = this.state.result[i].id;
@@ -93,12 +102,12 @@ class Quiz extends Component {
       let data = x.val();
 
       if (typeof data[quizName] === "undefined") {
-        swal("Proctoring Key:", "Default Key is : key", {
-          icon: "warning",
+        swal("Proctoring Key:", `Default Key is : ${key}`, {
+          icon: "success",
           buttons: true,
           content: "input"
         }).then(value => {
-          if (value === "key") {
+          if (value === key) {
             this.setState({
               quizName: quizName,
               currentQuiz: a,
@@ -139,7 +148,7 @@ class Quiz extends Component {
 
       //   console.log(snapshot);
       result.push(quiz);
-      allNames.push(quiz.id)
+      allNames.push(quiz.id);
 
       this.setState({
         allNames,
@@ -147,26 +156,12 @@ class Quiz extends Component {
         loaded: true
       });
 
-        // console.log(this.state.allNames);
+      // console.log(this.state.allNames);
     });
   }
 
   enableList = displayName => {
     // console.log('displayName',displayName);
-
-
-
-
-    
-
-
-
-
-
-
-
-
-
 
     this.setState({
       displayName: displayName,

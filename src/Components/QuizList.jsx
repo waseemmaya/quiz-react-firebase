@@ -19,7 +19,7 @@ class QuizList extends Component {
     };
   }
   render() {
-    const { result, enableQuiz, allNames, loaded } = this.state;
+    const { result, enableQuiz, loaded } = this.state;
     // console.log("propsResult", allNames);
 
     return (
@@ -62,9 +62,9 @@ class QuizList extends Component {
                     accent={false}
                     critical={false}
                     plain={true}
-                    label="Take Quiz"
+                    label={val.btnText}
                     icon={<FormNext />}
-                    onClick={() => enableQuiz(i, val.id)}
+                    onClick={() => enableQuiz(i, val.id, val.pass)}
                     primary={val.status}
                   />
                 </Box>
@@ -81,8 +81,8 @@ class QuizList extends Component {
   componentWillMount() {
     const { allNames, result } = this.state;
 
-          // console.log(result[1]);
-          // console.log(allNames);
+    // console.log(result[1]);
+    // console.log(allNames);
 
     let myID = localStorage.getItem("myID");
     let scoreRef = fire.database().ref(`Users/${myID}`);
@@ -91,18 +91,42 @@ class QuizList extends Component {
 
       for (let i = 0; i < allNames.length; i++) {
         if (typeof data[allNames[i]] === "undefined") {
-          console.log("if");
-          console.log(result[i]);
-          
-          result[i].status = true
+          // console.log('ifResult***', data[allNames[i]]);
+
+          result[i].status = true;
+          var randNo = Math.floor(10044 + Math.random() * 9000);
+          result[i].pass = `pass${randNo}`;
+          let btnText =`Take Quiz`;
+          result[i].btnText = btnText;
+
 
           this.setState({
             result,
             loaded: true
           });
         } else {
-          console.log("else");
-          result[i].status = false
+          // console.log(data[allNames[i]]);
+
+          let myScore = data[allNames[i].myScore];
+          let outOf = data[allNames[i].outOf];
+          // console.log("oldScore", myScore);
+          // console.log("outOf", outOf);
+          let a = data[allNames[i]];
+          let score = a.myScore;
+          let total = a.outOf;
+          // console.log('score',score);
+          // console.log('total',total);
+
+
+          // result[i].score = score;
+          // result[i].total = total;
+          let btnText =`Your score ${score}/${total}`;
+
+          result[i].btnText = btnText;
+          
+          result[i].status = false;
+          var randNo = Math.floor(10044 + Math.random() * 9000);
+          result[i].pass = `pass${randNo}`;
 
           this.setState({
             result,
